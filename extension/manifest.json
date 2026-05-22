@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Browser Bridge",
+  "version": "0.1.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw18uOXXkYtDDXKcb0ncYvdcXkhpzzzQjkejgw4ySJwfEOD9OcXZoL+tfcLgmzXFxbVDT9ZrWDpf8nw04W0XxyMpW6YKDggTLRdpyi0loz1X6oJPlYlEFylCcDTi/v/e8JMpOph6D/d3jjQdRGV0ezO54WiZu55Ld1kwWDCcVLA7KIEo+waKcP7wJJXpa9C8KFtKomeNmmA7+5ye+nTjqS3Rzyll/IWxAUXpFWDEtRDfLYc65aZhdrFdLwTGaPm9r6XrYmpSbZKbhcrB9H3zdkMeHjZpmAinZiTyBs1FkNTBtCjBEKuCBkPBovxIlKWKv9/9ECKrj8U+ZqUApvjxLYwIDAQAB",
+  "description": "Browser automation bridge for AI agents",
+  "permissions": ["nativeMessaging", "tabs", "activeTab", "scripting", "cookies"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

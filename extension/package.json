@@ -1,0 +1,14 @@
+{
+  "name": "browser-bridge-extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/background.ts --bundle --outfile=dist/background.js --target=chrome100 --minify && node -e \"const fs=require('fs'),p=require('path');const m=JSON.parse(fs.readFileSync('manifest.json','utf8'));m.background.service_worker='background.js';fs.writeFileSync(p.join('dist','manifest.json'),JSON.stringify(m,null,2));if(fs.existsSync('icons'))fs.cpSync('icons',p.join('dist','icons'),{recursive:true})\"",
+    "dev": "esbuild src/background.ts --bundle --outfile=dist/background.js --target=chrome100 --watch --sourcemap"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/chrome": "^0.0.270",
+    "esbuild": "^0.20.0"
+  }
+}
