@@ -68,6 +68,9 @@ var pageScreenshotCmd = &cobra.Command{
 		if format, _ := cmd.Flags().GetString("format"); format != "" {
 			body["format"] = format
 		}
+		if clip, _ := cmd.Flags().GetBool("clip"); clip {
+			body["clipElement"] = true
+		}
 
 		resp, err := c.Post(fmt.Sprintf("/tabs/%d/screenshot", tabID), body)
 		if err != nil {
@@ -252,6 +255,7 @@ func init() {
 	pageScreenshotCmd.Flags().Bool("full-page", false, "Capture full page")
 	pageScreenshotCmd.Flags().String("format", "png", "Image format: png or jpeg")
 	pageScreenshotCmd.Flags().StringP("output", "o", "", "Save screenshot to file path")
+	pageScreenshotCmd.Flags().Bool("clip", false, "Clip screenshot to element bounds (use with --selector or --ref)")
 
 	// content
 	pageContentCmd.Flags().String("format", "html", "Content format: html or markdown")
