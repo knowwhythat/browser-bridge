@@ -1,7 +1,9 @@
 ﻿{
-  "name": "com.browser.bridge",
-  "description": "Browser Bridge Native Host",
-  "path": "D:\\code\\mini-claw\\browser-bridge\\native-host\\native-host.exe",
-  "type": "stdio",
-  "allowed_origins": ["chrome-extension://ghfjechpgjogjpnlbjlnolbhkjeihnpd/"]
+    "name":  "com.browser.bridge",
+    "description":  "Browser Bridge Native Host",
+    "path":  "D:\\code\\mini-claw\\browser-bridge\\native-host\\native-host.exe",
+    "type":  "stdio",
+    "allowed_origins":  [
+                            "chrome-extension://ghfjechpgjogjpnlbjlnolbhkjeihnpd/"
+                        ]
 }

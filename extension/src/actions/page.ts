@@ -1,3 +1,33 @@
+// Crop image data URI to a specific rect using OffscreenCanvas
+async function cropImage(
+  dataUri: string,
+  rect: { x: number; y: number; width: number; height: number },
+  format: string,
+): Promise<string> {
+  const response = await fetch(dataUri);
+  const blob = await response.blob();
+  const bitmap = await createImageBitmap(
+    blob,
+    rect.x,
+    rect.y,
+    rect.width,
+    rect.height,
+  );
+  const canvas = new OffscreenCanvas(rect.width, rect.height);
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(bitmap, 0, 0);
+  const mimeType = format === "jpeg" ? "image/jpeg" : "image/png";
+  const croppedBlob = await canvas.convertToBlob({ type: mimeType });
+  const reader = new FileReader();
+  return new Promise((resolve) => {
+    reader.onload = () => {
+      const result = reader.result as string;
+      resolve(result.split(",")[1]);
+    };
+    reader.readAsDataURL(croppedBlob);
+  });
+}
+
 // 获取页面内容
 export async function handlePageContent(params: {
   tabId: number;
@@ -265,56 +295,19 @@ export async function handlePageScreenshot(params: {
     if (rect) {
       const dataUri = await chrome.tabs.captureVisibleTab(
         (await chrome.tabs.get(params.tabId)).windowId,
-        {
-          format,
-          quality: params.quality,
-        },
+        { format, quality: params.quality },
       );
-      // Crop the screenshot to the element rect using an offscreen canvas
-      const cropResults = await chrome.scripting.executeScript({
-        target: { tabId: params.tabId },
-        func: (
-          uri: string,
-          cropRect: { x: number; y: number; width: number; height: number },
-          fmt: string,
-        ) => {
-          return new Promise<string>((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement("canvas");
-              canvas.width = cropRect.width;
-              canvas.height = cropRect.height;
-              const ctx = canvas.getContext("2d")!;
-              ctx.drawImage(
-                img,
-                cropRect.x,
-                cropRect.y,
-                cropRect.width,
-                cropRect.height,
-                0,
-                0,
-                cropRect.width,
-                cropRect.height,
-              );
-              const mimeType = fmt === "jpeg" ? "image/jpeg" : "image/png";
-              const cropped = canvas.toDataURL(mimeType);
-              resolve(cropped.split(",")[1]);
-            };
-            img.src = uri;
-          });
+      // Crop using OffscreenCanvas in background (avoids CSP issues in page)
+      const base64 = await cropImage(
+        dataUri,
+        {
+          x: Math.round(rect.x),
+          y: Math.round(rect.y),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
         },
-        args: [
-          dataUri,
-          {
-            x: Math.round(rect.x),
-            y: Math.round(rect.y),
-            width: Math.round(rect.width),
-            height: Math.round(rect.height),
-          },
-          format,
-        ],
-      });
-      const base64 = cropResults[0].result as string;
+        format,
+      );
       return { tabId: params.tabId, format, data: base64 };
     }
   }
